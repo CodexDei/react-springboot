@@ -1,22 +1,19 @@
-import PropTypes from "prop-types";
+import { PropTypes } from "prop-types";
 
 export const ProductDetail = ({
-  product = {},
   handlerProductSelected,
   handlerRemove,
+  product = {},
 }) => {
   return (
     <tr>
-      {/* <td>{product.id}</td> */}
       <td>{product.name}</td>
-      <td>${product.price.toFixed(2)}</td>
+      <td>{product.price}</td>
       <td>{product.description}</td>
       <td>
         <button
           className="btn btn-secondary btn-sm"
-          onClick={() => {
-            handlerProductSelected(product);
-          }}
+          onClick={() => handlerProductSelected(product)}
         >
           update
         </button>
@@ -24,9 +21,7 @@ export const ProductDetail = ({
       <td>
         <button
           className="btn btn-danger btn-sm"
-          onClick={() => {
-            handlerRemove(product.id);
-          }}
+          onClick={() => handlerRemove(product.id)}
         >
           remove
         </button>
@@ -34,9 +29,8 @@ export const ProductDetail = ({
     </tr>
   );
 };
-
 ProductDetail.propTypes = {
-  products: PropTypes.object.isRequired,
-  handlerProductSelected: PropTypes.func.isRequired,
+  product: PropTypes.object.isRequired,
   handlerRemove: PropTypes.func.isRequired,
+  handlerProductSelected: PropTypes.func.isRequired,
 };

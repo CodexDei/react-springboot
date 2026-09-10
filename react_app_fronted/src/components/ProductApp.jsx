@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { findAll, listProducts } from "../services/ProductService";
+import { create, findAll, remove, update } from "../services/ProductService";
 import { ProductGrid } from "./ProductGrid";
 import PropTypes from "prop-types";
 import { ProductForm } from "./ProductForm";
@@ -10,89 +10,72 @@ export const ProductApp = ({ title }) => {
   const [productSelected, setProductSelected] = useState({
     id: 0,
     name: "",
-    price: "",
     description: "",
+    price: "",
   });
 
   const getProducts = async () => {
     const result = await findAll();
-    console.log(result);
+    // console.log(result);
     setProducts(result.data._embedded.products);
   };
 
   useEffect(() => {
-    // los productos que deben mostrarse.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     getProducts();
   }, []);
 
-  const handlerAddProduct = (product) => {
-    console.log(product);
+  const handlerAddProduct = async (product) => {
+    // console.log(product);
 
-    // EDITAR PRODUCTO
     if (product.id > 0) {
+      const response = await update(product);
+      // console.log(response);
       setProducts((products) =>
-        products.map((prod) => (prod.id === product.id ? product : prod)),
+        products.map((prod) =>
+          prod.id === response.data.id ? { ...response.data } : prod,
+        ),
       );
+    } else {
+      const response = await create(product);
+      setProducts([...products, { ...response.data }]);
     }
-    // CREAR PRODUCTO
-    else {
-      const newProduct = {
-        ...product,
-        id: new Date().getTime(),
-      };
-
-      setProducts((products) => [...products, newProduct]);
-    }
-
-    // Volvemos a dejar el formulario preparado para un nuevo producto
-    setProductSelected({
-      id: 0,
-      name: "",
-      price: "",
-      description: "",
-    });
+  };
+  const handlerRemoveProduct = (id) => {
+    // console.log(id);
+    remove(id);
+    setProducts(products.filter((product) => product.id != id));
   };
 
   const handlerProductSelected = (product) => {
     setProductSelected({ ...product });
   };
-
-  const handlerRemoveProduct = (id) => {
-    console.log(id);
-
-    setProducts((products) => products.filter((product) => product.id !== id));
-  };
-
   return (
     <div className="container my-4">
-      <h1>{title}</h1>
-
+      <h2>{title}</h2>
       <div className="row">
-        <div className="col-12 col-md-4">
+        <div className="col">
           <ProductForm
-            key={productSelected?.id ?? 0}
             handlerAdd={handlerAddProduct}
             productSelected={productSelected}
           />
         </div>
-
-        <div className="col-12 col-md-4">
-          {products.length === 0 ? (
-            <div className="alert alert-warning">No products available</div>
-          ) : (
+        <div className="col">
+          {products.length > 0 ? (
             <ProductGrid
               products={products}
-              handlerProductSelected={handlerProductSelected}
               handlerRemove={handlerRemoveProduct}
+              handlerProductSelected={handlerProductSelected}
             />
+          ) : (
+            <div className="alert alert-warning">
+              No hay productos en el sistema!
+            </div>
           )}
         </div>
       </div>
     </div>
   );
 };
-
 ProductApp.propTypes = {
   title: PropTypes.string.isRequired,
 };
