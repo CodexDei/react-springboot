@@ -1,10 +1,10 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
 //import './index.css'
-import { ProductApp } from './components/ProductApp.jsx'
+import { ProductApp } from "./components/ProductApp.jsx";
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <ProductApp title={ 'Product List' } />
+    <ProductApp title={"Laboratorio Wilcast sas"} />
   </StrictMode>,
-)
+);
